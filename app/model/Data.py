@@ -28,6 +28,18 @@ class Data:
             result['status'] = 10
         return result
 
+    @staticmethod
+    def getPersons():
+        result = {}
+        data = SqlExecuter.getDataByQueryAll("select DISTINCT onl.vk_id, usrs.first_name, usrs.last_name from online as onl inner join vk_users as usrs where usrs.vk_id = onl.vk_id order by onl.vk_id;")
+        if(len(data) > 0):
+            result['status'] = 0
+            result['data'] = data
+        else:
+            result['status'] = 12
+            result['data'] = []
+        return result
+
     
 
         

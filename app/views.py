@@ -22,6 +22,16 @@ def addOnline():
     result = Data.addOnlineToUser(vk_id,online)
     return jsonify(result)
 
+
+@app.route('/persons',methods=['GET'])
+def getPersons():
+    result = Data.getPersons()
+    return result
+
+@app.route('/test',methods = ['GET'])
+def test():
+    return jsonify({"status":0,"method":"Test"})
+
 @app.route('/thread/active',methods=['GET'])
 def getActiveThreads():
     res = []
@@ -79,6 +89,3 @@ def getAllThreads():
 @app.errorhandler(404)
 def error404handler(e):
     return jsonify({'status':3,'message':'Not found this method'})
-
-
-    
