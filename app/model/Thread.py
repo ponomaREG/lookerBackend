@@ -18,14 +18,16 @@ class lookerThread(threading.Thread):
         self.api = api
         # self.db = db
 
+
     def run(self):
         while self.is_alive:
             try:
-                request = self.api.users.get(user_id=self.vk_id,fields=['online'])
+                request = self.api.users.get(user_id=self.vk_id,fields=['online,photo_400_orig'])
             except:
                 time.sleep(30)
                 continue
             online = request[0]['online']
+            image_url = request[0]['photo_400_orig']
             cursor = SqlExecuter.executeModification('insert into online("online","vk_id") values({},{});'.format(online,self.vk_id))
             time.sleep(5)
 

@@ -3,11 +3,8 @@ from flask import jsonify,request
 from app.model.Data import Data
 from app.model.Thread import lookerThread
 from app.util.noneChecker import isArgsNone
-import vk
 import threading
-
-session = vk.Session(access_token="394a2675e294ec4b83bc1b5d49607af45c6bd4d5aa8e3f55857baf40f579d2a82687ba542bf20125b51f9")
-api = vk.API(session,v=5.21)
+from app.util.vkHolder import VKHolder
 
 @app.route('/add',methods=['GET'])
 def addOnline():
@@ -30,7 +27,8 @@ def getPersons():
 
 @app.route('/test',methods = ['GET'])
 def test():
-    return jsonify({"status":0,"method":"Test"})
+    return jsonify({"status":0,"method":"Test123"})
+
 
 @app.route('/thread/active',methods=['GET'])
 def getActiveThreads():
@@ -56,7 +54,9 @@ def getOnlineByPeriod():
 
 @app.route('/thread/<int:name>/start',methods=['GET'])
 def testThread(name):
-    thread = lookerThread(name,name,api)
+    if(not Data.checkIfPhotoAlreadyDownloadedAndElseDownloadIt(name)):
+        return jsonify({'status':20})
+    thread = lookerThread(name,name,VKHolder.api)
     thread.start()
     return jsonify({'status':0})
     

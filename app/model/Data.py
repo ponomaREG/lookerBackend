@@ -1,5 +1,9 @@
 import sqlite3
 from app.model.SqlExecuter import SqlExecuter
+import requests
+import os
+from app.util.vkHolder import VKHolder
+from app import app
 
 
 class Data:
@@ -31,7 +35,7 @@ class Data:
     @staticmethod
     def getPersons():
         result = {}
-        data = SqlExecuter.getDataByQueryAll("select DISTINCT onl.vk_id, usrs.first_name, usrs.last_name from online as onl inner join vk_users as usrs where usrs.vk_id = onl.vk_id order by onl.vk_id;")
+        data = SqlExecuter.getDataByQueryAll("select DISTINCT  onl.vk_id || '.jpg'  as 'photoURL',onl.vk_id, usrs.first_name, usrs.last_name from online as onl inner join vk_users as usrs where usrs.vk_id = onl.vk_id order by onl.vk_id;")
         if(len(data) > 0):
             result['status'] = 0
             result['data'] = data
@@ -39,6 +43,26 @@ class Data:
             result['status'] = 12
             result['data'] = []
         return result
+
+
+    @staticmethod
+    def checkIfPhotoAlreadyDownloadedAndElseDownloadIt(vk_id):
+        photoname = "{}.jpg".format(vk_id)
+        photopath = os.path.join(app.config['UPLOAD_FOLDER'],photoname)
+        if(os.path.isfile(photopath)):
+            return True
+        pic_url = VKHolder.api.users.get(user_id=vk_id,fields=['photo_400_orig'])[0]['photo_400_orig']
+        with open(photopath, 'wb') as handle:
+            response = requests.get(pic_url, stream=True)
+            if not response.ok:
+                print(response)
+                return False
+            for block in response.iter_content(1024):
+                if not block:
+                    break
+                handle.write(block)
+        return True
+        
 
     
 
