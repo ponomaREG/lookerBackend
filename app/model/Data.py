@@ -48,7 +48,8 @@ class Data:
     @staticmethod
     def checkIfPhotoAlreadyDownloadedAndElseDownloadIt(vk_id):
         photoname = "{}.jpg".format(vk_id)
-        photopath = os.path.join(app.config['UPLOAD_FOLDER'],photoname)
+        photopath = app.config['UPLOAD_FOLDER'] + "\\" + photoname
+        #photopath = os.path.join(app.config['UPLOAD_FOLDER'],photoname)
         if(os.path.isfile(photopath)):
             return True
         pic_url = VKHolder.api.users.get(user_id=vk_id,fields=['photo_400_orig'])[0]['photo_400_orig']
