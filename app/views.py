@@ -54,8 +54,8 @@ def getOnlineByPeriod():
 
 @app.route('/thread/<int:name>/start',methods=['GET'])
 def testThread(name):
-    if(not Data.checkIfPhotoAlreadyDownloadedAndElseDownloadIt(name)):
-        return jsonify({'status':20})
+    # if(not Data.checkIfPhotoAlreadyDownloadedAndElseDownloadIt(name)):
+    #     return jsonify({'status':20})
     if(not Data.checkIfUserExistsInDatabaseAndElseInsertHim(name)):
         return jsonify({"status":21})
     thread = lookerThread(name,name,VKHolder.api)
