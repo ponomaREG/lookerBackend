@@ -45,5 +45,7 @@ class SqlExecuter:
         columns = [description[0] for description in cursor.description]
         oneRow = cursor.fetchone()
         cursor.close()
+        if(oneRow is None):
+            return None
         return SqlExecuter.__prepareDataOneRow(oneRow,columns)
 

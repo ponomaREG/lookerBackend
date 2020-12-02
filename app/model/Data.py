@@ -62,6 +62,17 @@ class Data:
                     break
                 handle.write(block)
         return True
+
+    @staticmethod
+    def checkIfUserExistsInDatabaseAndElseInsertHim(vk_id):
+        data = SqlExecuter.getDataByQueryOne("select * from vk_users where vk_id = {};".format(vk_id))
+        if(data is None):
+            userInfo = VKHolder.api.users.get(user_id = vk_id)
+            last_name = userInfo[0]['last_name']
+            first_name = userInfo[0]['first_name']
+            lastrowid = SqlExecuter.executeModification('insert into vk_users values({},"{}","{}");'.format(vk_id,last_name,first_name))
+            return lastrowid > -1
+        return True
         
 
     
