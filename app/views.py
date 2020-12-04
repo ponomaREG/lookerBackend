@@ -52,6 +52,19 @@ def getOnlineByPeriod():
     return jsonify(result)
 
 
+@app.route('/get/day',methods=["GET"])
+def getOnlibeByDay():
+    result = {}
+    vk_id = request.args.get('vk_id',type=int)
+    day = request.args.get('day',type=str)
+    if(isArgsNone(vk_id,day)):
+        result['status'] = 2
+        result['message'] = 'Not enough arguments'
+        return jsonify(result)
+    result = Data.getOnlineByDay(vk_id,day)
+    return jsonify(result)
+
+
 @app.route('/thread/<int:name>/start',methods=['GET'])
 def testThread(name):
     # if(not Data.checkIfPhotoAlreadyDownloadedAndElseDownloadIt(name)):

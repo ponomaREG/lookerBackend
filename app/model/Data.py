@@ -24,12 +24,18 @@ class Data:
     @staticmethod
     def getOnlineByVkID(vk_id,period_begin,period_end):
         result = {}
-        data = SqlExecuter.getDataByQueryAll("SELECT * from online where date between '{}' and '{}' and vk_id = {};".format(period_begin,period_end,vk_id))
+        data = SqlExecuter.getDataByQueryAll("SELECT date,online from online where date between '{}' and '{}' and vk_id = {} order by date;".format(period_begin,period_end,vk_id))
         if(len(data) > 0):
             result['status'] = 0
-            result['data'] = data
         else:
             result['status'] = 10
+        result['data'] = data
+        result['vk_id'] = vk_id
+        return result
+
+    @staticmethod
+    def getOnlineByDay(vk_id,day):
+        result = Data.getOnlineByVkID(vk_id,"{} 00:00:00".format(day),"{} 23:59:59".format(day))
         return result
 
     @staticmethod
