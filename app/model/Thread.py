@@ -9,13 +9,15 @@ class lookerThread(threading.Thread):
     vk_id = -1
     api = None
     db = None
+    interval = None
     is_alive = True
 
-    def __init__(self,name,vk_id,api):
+    def __init__(self,name,vk_id,api,intervalInSec):
         threading.Thread.__init__(self)
         self.name = name
         self.vk_id = vk_id
         self.api = api
+        self.interval = intervalInSec
         # self.db = db
 
 
@@ -29,5 +31,5 @@ class lookerThread(threading.Thread):
             online = request[0]['online']
             image_url = request[0]['photo_400_orig']
             cursor = SqlExecuter.executeModification('insert into online("online","vk_id") values({},{});'.format(online,self.vk_id))
-            time.sleep(5)
+            time.sleep(self.interval)
 

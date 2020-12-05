@@ -69,9 +69,10 @@ def getOnlibeByDay():
 def testThread(name):
     # if(not Data.checkIfPhotoAlreadyDownloadedAndElseDownloadIt(name)):
     #     return jsonify({'status':20})
+    intervalInSec = request.args.get('interval',type=int,default=5)
     if(not Data.checkIfUserExistsInDatabaseAndElseInsertHim(name)):
         return jsonify({"status":21})
-    thread = lookerThread(name,name,VKHolder.api)
+    thread = lookerThread(name,name,VKHolder.api,intervalInSec)
     thread.start()
     return jsonify({'status':0})
     
