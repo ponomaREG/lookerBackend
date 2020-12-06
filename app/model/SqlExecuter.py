@@ -25,9 +25,11 @@ class SqlExecuter:
 
     @staticmethod
     def executeModification(query):
+        db.execute("BEGIN;")
         cursor = db.execute(query)
         lastrowid = cursor.lastrowid
         cursor.close()
+        db.execute("END Transaction;")
         db.commit()
         return lastrowid
 
