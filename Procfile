@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: newrelic-admin gunicorn app:app
