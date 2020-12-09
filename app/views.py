@@ -52,6 +52,32 @@ def getOnlineByPeriod():
     return jsonify(result)
 
 
+@app.route("/persons/info",methods=['GET'])
+def getUserVkInfo():
+    result = {}
+    vk_id = request.args.get('vk_id',type=int)
+    if(isArgsNone(vk_id)):
+        result['status'] = 2
+        result['message'] = 'Not enough arguments'
+        return jsonify(result)
+    data = Data.getUserVkInfo(vk_id)
+    result['data'] = data
+    result['status'] = 0
+    return jsonify(result)
+
+
+@app.route('/persons/add')
+def addNewPerson():
+    result= {}
+    vk_id = request.args.get("vk_id",type=int)
+    if(isArgsNone(vk_id)):
+        result['status'] = 2
+        result['message'] = 'Not enough arguments'
+        return jsonify(result)
+    return testThread(vk_id)
+    
+
+
 @app.route('/get/day',methods=["GET"])
 def getOnlibeByDay():
     result = {}

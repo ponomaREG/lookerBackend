@@ -9,6 +9,14 @@ from app import app
 class Data:
 
 
+    @staticmethod
+    def getUserVkInfo(vk_id):
+        userInfo = VKHolder.api.users.get(user_id = vk_id)
+        last_name = userInfo[0]['last_name']
+        first_name = userInfo[0]['first_name']
+        pic_url = VKHolder.api.users.get(user_id=vk_id,fields=['photo_400_orig'])[0]['photo_400_orig']
+        return [{'last_name':last_name,'first_name':first_name,'imageURL':pic_url,'vk_id':str(vk_id)}]
+
 
     @staticmethod
     def addOnlineToUser(vk_id,online):
