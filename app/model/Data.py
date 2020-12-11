@@ -76,7 +76,7 @@ class Data:
             if(type(thread.name) is int) and (thread.name == name):
                 res['active'] = True
                 return res
-        res['active'] = True
+        res['active'] = False
         return res
                 
         
