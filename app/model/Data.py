@@ -70,9 +70,10 @@ class Data:
 
 
     @staticmethod
-    def statusThread(name):
+    def statusThread(name,isNeedInfo = True):
         res = {}
-        res['info'] = Data.getUserVkInfo(name)[0]
+        if(isNeedInfo):
+            res['info'] = Data.getUserVkInfo(name)[0]
         for thread in threading.enumerate():
             if(type(thread.name) is int) and (thread.name == name):
                 res['active'] = True
@@ -117,6 +118,8 @@ class Data:
         data = SqlExecuter.getDataByQueryAll("select DISTINCT onl.vk_id,usrs.imageURL, usrs.first_name, usrs.last_name from online as onl inner join vk_users as usrs where usrs.vk_id = onl.vk_id order by onl.vk_id;")
         if(len(data) > 0):
             result['status'] = 0
+            for i in range(len(data)):
+                data[i] = {**data[i],**Data.statusThread(int(data[i]['vk_id']),isNeedInfo = False)}
             result['data'] = data
         else:
             result['status'] = 12
