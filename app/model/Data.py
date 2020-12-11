@@ -55,7 +55,7 @@ class Data:
     @staticmethod
     def getOnlineByDay(vk_id,day):
         result = Data.getOnlineByVkID(vk_id,"{} 00:00:00".format(day),"{} 23:59:59".format(day))
-        return resu
+        return result
 
 
     
