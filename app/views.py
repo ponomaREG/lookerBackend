@@ -111,7 +111,7 @@ def testThread(name):
     intervalInSec = request.args.get('interval',type=int,default=5)
     if(not Data.checkIfUserExistsInDatabaseAndElseInsertHim(name)):
         return jsonify({"status":21})
-    Data.startThread(name,interval)
+    Data.startThread(name,intervalInSec)
     return jsonify({'status':0})
     
 @app.route('/thread/<int:name>/stop')

@@ -6,6 +6,7 @@ from app.util.vkHolder import VKHolder
 from app.util.vkApiHelper import VKAPIHelpers
 from app import app
 import threading
+from app.model.Thread import lookerThread
 
 
 class Data:
@@ -94,7 +95,7 @@ class Data:
         for thread in threading.enumerate():
             if(thread.name == name):
                 return {'status':25}
-        thread = lookerThread(name,name,VKHolder.api,intervalInSec)
+        thread = lookerThread(name,name,VKHolder.api,interval)
         thread.start()
         return {'status':0}
 
@@ -152,10 +153,10 @@ class Data:
     def checkIfUserExistsInDatabaseAndElseInsertHim(vk_id):
         data = SqlExecuter.getDataByQueryOne("select * from vk_users where vk_id = {};".format(vk_id))
         if(data is None):
-            userInfo = VKHolder.api.users.get(user_id = vk_id)
+            userInfo = Data.getUserVkInfo(vk_id)
             last_name = userInfo[0]['last_name']
             first_name = userInfo[0]['first_name']
-            pic_url = VKHolder.api.users.get(user_id=vk_id,fields=['photo_400_orig'])[0]['photo_400_orig']
+            pic_url = userInfo[0]['imageURL']
             lastrowid = SqlExecuter.executeModification('insert into vk_users values({},"{}","{}","{}");'.format(vk_id,last_name,first_name,pic_url))
             return lastrowid > -1
         return True
