@@ -3,18 +3,24 @@ from app.model.SqlExecuter import SqlExecuter
 import requests
 import os
 from app.util.vkHolder import VKHolder
+from app.util.vkApiHelper import VKAPIHelpers
 from app import app
+import threading
 
 
 class Data:
 
+#-----------------------------------------------------------
+#USER ROUTE
+#-----------------------------------------------------------
 
     @staticmethod
     def getUserVkInfo(vk_id):
-        userInfo = VKHolder.api.users.get(user_id = vk_id)
+        fields = ["photo_400_orig","photo_200", "photo_100", "photo_200_orig","photo_50",  "photo_max", "photo_max_orig"]
+        userInfo = VKHolder.api.users.get(user_id = vk_id,fields=fields)
         last_name = userInfo[0]['last_name']
         first_name = userInfo[0]['first_name']
-        pic_url = VKHolder.api.users.get(user_id=vk_id,fields=['photo_400_orig'])[0]['photo_400_orig']
+        pic_url = VKAPIHelpers.getAvailablePhotoUrl(userInfo[0],fields)
         return [{'last_name':last_name,'first_name':first_name,'imageURL':pic_url,'vk_id':str(vk_id)}]
 
 
@@ -29,6 +35,10 @@ class Data:
             result['status'] = 11
         return result
 
+
+#-----------------------------------------------------------
+#ONLINE DATA
+#-----------------------------------------------------------
     @staticmethod
     def getOnlineByVkID(vk_id,period_begin,period_end):
         result = {}
@@ -44,8 +54,62 @@ class Data:
     @staticmethod
     def getOnlineByDay(vk_id,day):
         result = Data.getOnlineByVkID(vk_id,"{} 00:00:00".format(day),"{} 23:59:59".format(day))
-        return result
+        return resu
 
+
+    
+#-----------------------------------------------------------
+#THREAD DATA
+#-----------------------------------------------------------
+    @staticmethod
+    def stopThreads():
+        for thread in threading.enumerate():
+            if(type(thread.name) is int):
+                thread.is_alive = False
+
+
+    @staticmethod
+    def statusThread(name):
+        res = {}
+        res['info'] = Data.getUserVkInfo(name)[0]
+        for thread in threading.enumerate():
+            if(type(thread.name) is int) and (thread.name == name):
+                res['active'] = True
+                return res
+        res['active'] = True
+        return res
+                
+        
+
+    @staticmethod
+    def getActiveThreads():
+        res = []
+        for thread in threading.enumerate():
+            if(type(thread.name) is int):
+                res.append(thread.name)
+        return res
+
+    @staticmethod
+    def startThread(name,interval):
+        for thread in threading.enumerate():
+            if(thread.name == name):
+                return {'status':25}
+        thread = lookerThread(name,name,VKHolder.api,intervalInSec)
+        thread.start()
+        return {'status':0}
+
+    @staticmethod
+    def stopThread(name):
+        res = []
+        for thread in threading.enumerate():
+            if(thread.name == name):
+                thread.is_alive = False
+                return {'status':0}
+        return{'message':'Not found','status':3}
+
+#-----------------------------------------------------------
+#PERSONS ROUTE
+#-----------------------------------------------------------
     @staticmethod
     def getPersons():
         result = {}
@@ -77,6 +141,12 @@ class Data:
     #                 break
     #             handle.write(block)
     #     return True
+
+
+#-----------------------------------------------------------
+#ANOTHER DATA
+#-----------------------------------------------------------
+
 
     @staticmethod
     def checkIfUserExistsInDatabaseAndElseInsertHim(vk_id):

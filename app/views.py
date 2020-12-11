@@ -19,24 +19,14 @@ def addOnline():
     result = Data.addOnlineToUser(vk_id,online)
     return jsonify(result)
 
-
-@app.route('/persons',methods=['GET'])
-def getPersons():
-    result = Data.getPersons()
-    return result
-
 @app.route('/test',methods = ['GET'])
 def test():
     return jsonify({"status":0,"method":"Test123"})
 
 
-@app.route('/thread/active',methods=['GET'])
-def getActiveThreads():
-    res = []
-    for thread in threading.enumerate():
-        if(type(thread.name) is int):
-            res.append(thread.name)
-    return jsonify({'status':0,'res':res})
+#-----------------------------------------------------------
+#PERIOD ROUTE
+#-----------------------------------------------------------
 
 @app.route('/get/period',methods=['GET'])
 def getOnlineByPeriod():
@@ -50,6 +40,31 @@ def getOnlineByPeriod():
         return jsonify(result)
     result = Data.getOnlineByVkID(vk_id,period_begin,period_end)
     return jsonify(result)
+
+
+
+@app.route('/get/day',methods=["GET"])
+def getOnlibeByDay():
+    result = {}
+    vk_id = request.args.get('vk_id',type=int)
+    day = request.args.get('day',type=str)
+    if(isArgsNone(vk_id,day)):
+        result['status'] = 2
+        result['message'] = 'Not enough arguments'
+        return jsonify(result)
+    result = Data.getOnlineByDay(vk_id,day)
+    return jsonify(result)
+
+#-----------------------------------------------------------
+#PERSONS ROUTE
+#-----------------------------------------------------------
+
+@app.route('/persons',methods=['GET'])
+def getPersons():
+    result = Data.getPersons()
+    return result
+
+
 
 
 @app.route("/persons/info",methods=['GET'])
@@ -78,17 +93,15 @@ def addNewPerson():
     
 
 
-@app.route('/get/day',methods=["GET"])
-def getOnlibeByDay():
-    result = {}
-    vk_id = request.args.get('vk_id',type=int)
-    day = request.args.get('day',type=str)
-    if(isArgsNone(vk_id,day)):
-        result['status'] = 2
-        result['message'] = 'Not enough arguments'
-        return jsonify(result)
-    result = Data.getOnlineByDay(vk_id,day)
-    return jsonify(result)
+#-----------------------------------------------------------
+#THREAD ROUTE
+#-----------------------------------------------------------
+
+
+
+@app.route('/thread/active',methods=['GET'])
+def getActiveThreads():
+    return jsonify({'status':0,'data':Data.getActiveThreads()})
 
 
 @app.route('/thread/<int:name>/start',methods=['GET'])
@@ -98,34 +111,25 @@ def testThread(name):
     intervalInSec = request.args.get('interval',type=int,default=5)
     if(not Data.checkIfUserExistsInDatabaseAndElseInsertHim(name)):
         return jsonify({"status":21})
-    thread = lookerThread(name,name,VKHolder.api,intervalInSec)
-    thread.start()
+    Data.startThread(name,interval)
     return jsonify({'status':0})
     
 @app.route('/thread/<int:name>/stop')
 def stopThread(name):
-    res = []
-    for thread in threading.enumerate():
-        if(thread.name == name):
-            thread.is_alive = False
-            return jsonify({'status':0})
-    return jsonify({'status':5,'message':'Not found this thread'}) 
+    result = Data.stopThread(name)
+    return jsonify(result) 
 
 
 @app.route('/thread/stop',methods=['GET'])
 def stopAllThreads():
-    for thread in threading.enumerate():
-        if(type(thread.name) is int):
-            thread.is_alive = False
+    Data.stopThreads()
     return jsonify({'status':0})
 
 
-@app.route('/thread/get',methods = ['GET'])
-def getAllThreads():
-    res = []
-    for thread in threading.enumerate():
-        res.append(thread.name)
-    return jsonify({'res':res,'status':0})
+@app.route('/thread/<int:name>',methods = ['GET'])
+def getStatusThread(name):
+    res = Data.statusThread(name)
+    return jsonify({'data':res,'status':0})
 
     
 @app.errorhandler(404)
