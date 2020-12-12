@@ -127,6 +127,15 @@ class Data:
         return result
 
 
+    @staticmethod
+    def removePerson(vk_id):
+        result = {}
+        SqlExecuter.executeModification("delete from vk_users where vk_id = {};".format(vk_id))
+        SqlExecuter.executeModification("delete from online where vk_id = {};".format(vk_id))
+        result['status'] = 0
+        return result
+
+
     # @staticmethod
     # def checkIfPhotoAlreadyDownloadedAndElseDownloadIt(vk_id):
     #     photoname = "{}.jpg".format(vk_id)

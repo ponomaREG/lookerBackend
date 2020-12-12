@@ -90,6 +90,18 @@ def addNewPerson():
         result['message'] = 'Not enough arguments'
         return jsonify(result)
     return testThread(vk_id)
+
+
+@app.route('/persons/remove')
+def removePerson():
+    result = {}
+    vk_id = request.args.get('vk_id',type=int)
+    if(isArgsNone(vk_id)):
+        result['status'] = 2
+        result['message'] = 'Not enough arguments'
+        return result
+    result = Data.removePerson(vk_id)
+    return jsonify(result)
     
 
 
